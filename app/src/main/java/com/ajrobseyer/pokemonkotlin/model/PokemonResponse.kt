@@ -1,9 +1,9 @@
 package com.ajrobseyer.pokemonkotlin.model
 
-import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class PokemonResponse {
+class PokemonResponse : Serializable {
     val count:Int=0
     @SerializedName("next")
     val nextPage:String=""

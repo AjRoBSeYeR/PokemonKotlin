@@ -2,8 +2,8 @@ package com.ajrobseyer.pokemonkotlin.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ajrobseyer.pokemonkotlin.model.PokemonResponse
 import com.ajrobseyer.pokemonkotlin.R
+import com.ajrobseyer.pokemonkotlin.model.PokemonResponse
 import com.ajrobseyer.pokemonkotlin.util.RestClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,15 +16,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val apiService=
+        val apiService =
             RestClient.getRestClient()
 
-        apiService.get20Pokemon().enqueue(object: Callback<PokemonResponse> {
-            override fun onResponse(call: Call<PokemonResponse>?, response: Response<PokemonResponse>?) {
-                 response?.body().let {
-
+        apiService.get20Pokemon().enqueue(object : Callback<PokemonResponse> {
+            override fun onResponse(
+                call: Call<PokemonResponse>?,
+                response: Response<PokemonResponse>?
+            ) {
+                response?.body().let {
+                    lateinit var bundle: Bundle
+                    bundle.putSerializable("pokemonList", response?.body())
                 }
             }
+
             override fun onFailure(call: Call<PokemonResponse>?, t: Throwable?) {
                 t?.printStackTrace()
             }
