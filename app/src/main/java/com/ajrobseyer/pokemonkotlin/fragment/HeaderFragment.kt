@@ -18,7 +18,7 @@ private const val ARG_PARAM1 = "param1"
 
 
 class HeaderFragment : Fragment() {
-    private var param1: String? = ""
+    private var param1: String? = "valor inicial"
 
 
     companion object {
@@ -51,29 +51,8 @@ class HeaderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val apiService =
-            RestClient.getRestClient()
 
-        apiService.get20Pokemon().enqueue(object : Callback<PokemonResponse> {
-            override fun onResponse(
-                call: Call<PokemonResponse>?,
-                response: Response<PokemonResponse>?
-            ) {
-                response?.body().let {
-                    var currentCount = 0
-                    var totalCount = 0
-                    val data: PokemonResponse? =response!!.body()
-                    tvCounter.text = "$currentCount / $totalCount"
-
-                   //val fragment = HeaderFragment.newInstance("Pedro")
-                   //supportFragmentManager.beginTransaction().replace(R.id.headFragment, fragment).commit()
-                }
-            }
-
-            override fun onFailure(call: Call<PokemonResponse>?, t: Throwable?) {
-                t?.printStackTrace()
-            }
-        })
+        tvCounter.text = param1
 
     }
 }
