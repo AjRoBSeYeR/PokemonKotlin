@@ -6,7 +6,6 @@ import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.fragment.HeaderFragment
 import com.ajrobseyer.pokemonkotlin.model.PokemonResponse
 import com.ajrobseyer.pokemonkotlin.util.RestClient
-import kotlinx.android.synthetic.main.fragment_header.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

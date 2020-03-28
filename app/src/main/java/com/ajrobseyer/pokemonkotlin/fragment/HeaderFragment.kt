@@ -23,14 +23,13 @@ class HeaderFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String) =
-            HeaderFragment().apply {
+        fun newInstance(param1: String):HeaderFragment {
+            return HeaderFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                 }
-                return HeaderFragment()
             }
-
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
