@@ -12,7 +12,7 @@ import com.ajrobseyer.pokemonkotlin.R
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class PokemonFragmen : Fragment() {
+class PokemonFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -20,7 +20,7 @@ class PokemonFragmen : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            PokemonFragmen().apply {
+            PokemonFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
