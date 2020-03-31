@@ -4,14 +4,21 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.fragment.HeaderFragment
+import com.ajrobseyer.pokemonkotlin.fragment.HeaderFragmentCommunication
+import com.ajrobseyer.pokemonkotlin.fragment.PokemonFragment
+import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import com.ajrobseyer.pokemonkotlin.model.servicemodel.PokemonResponseServiceModel
 import com.ajrobseyer.pokemonkotlin.util.RestClient
+import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
+
+    private lateinit var headerFragment: HeaderFragment
+    private lateinit var pokemonFragment: PokemonFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
@@ -34,11 +41,17 @@ class MainActivity : AppCompatActivity() {
                     val lowerLimit: Int = upperLimit - 19
                     val range = "$lowerLimit a $upperLimit"
 
-                    val fragment = HeaderFragment.newInstance(
+                    headerFragment = HeaderFragment.newInstance(
+                        this@MainActivity,
                         range,
-                        it.count.toString()
+                        it.count.toString(),
+                        it.results as ArrayList<PokemonBasicInfo>
                     )
-                    supportFragmentManager.beginTransaction().replace(R.id.headFragment, fragment)
+                    supportFragmentManager.beginTransaction().replace(R.id.headContainer, headerFragment)
+                        .commit()
+                    pokemonFragment = PokemonFragment.newInstance()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.pokemonContainer, pokemonFragment)
                         .commit()
                 }
             }
@@ -49,6 +62,14 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
+
+    override fun dataInterchage(info: ArrayList<PokemonBasicInfo>) {
+
+        pokemonFragment.onSendPokemonData(
+          info
+        )
+    }
+
 
 
 }

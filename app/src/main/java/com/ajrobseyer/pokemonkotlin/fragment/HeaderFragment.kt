@@ -1,28 +1,34 @@
 package com.ajrobseyer.pokemonkotlin.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.ajrobseyer.pokemonkotlin.R
+import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import kotlinx.android.synthetic.main.fragment_header.*
-import org.jetbrains.anko.support.v4.toast
 
 
-class HeaderFragment : Fragment() {
+class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentCommunication) :
+    Fragment() {
     private var countIni: String = "0"
     private var countTotal: String = "0"
-
+    private lateinit var pokemonList : ArrayList<PokemonBasicInfo>
 
     companion object {
         @JvmStatic
-        fun newInstance(ini: String, total: String) =
-            HeaderFragment().apply {
+        fun newInstance(
+            origin: HeaderFragmentCommunication,
+            ini: String,
+            total: String,
+            pokemonList: ArrayList<PokemonBasicInfo>
+        ) =
+            HeaderFragment(origin).apply {
                 arguments = Bundle().apply {
                     putString("countIni", ini)
                     putString("countTotal", total)
+                    putSerializable("lista", pokemonList)
                 }
             }
     }
@@ -32,6 +38,7 @@ class HeaderFragment : Fragment() {
         arguments?.let {
             countIni = it.getString("countIni").toString()
             countTotal = it.getString("countTotal").toString()
+            pokemonList = it.getSerializable("lista") as ArrayList<PokemonBasicInfo>
         }
     }
 
@@ -50,15 +57,32 @@ class HeaderFragment : Fragment() {
         val upperLimit = countIni.substring(0, spacePosition)
         if (upperLimit.toInt() == 1) {
             btnPrev.visibility = View.INVISIBLE
-        }else{
+        } else {
             btnPrev.visibility = View.VISIBLE
+            btnPrev.setOnClickListener {
+                //TODO logica para el botón
+            }
+        }
+
+        if (upperLimit.toInt() == countTotal.toInt() - 19) {
+            btnNext.visibility = View.INVISIBLE
+        } else {
+            btnNext.visibility = View.VISIBLE
+            btnNext.setOnClickListener {
+
+            }
         }
 
         tvCounter.text = "$countIni de $countTotal"
 
-        btnPrev.setOnClickListener {
-
-        }
+        headerFragmentCommunication.dataInterchage(
+            pokemonList
+        )
 
     }
+
+}
+
+interface HeaderFragmentCommunication {
+    fun dataInterchage(info: ArrayList<PokemonBasicInfo>)
 }
