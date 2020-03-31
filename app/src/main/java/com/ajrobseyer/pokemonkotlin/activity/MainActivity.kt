@@ -1,5 +1,6 @@
 package com.ajrobseyer.pokemonkotlin.activity
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ajrobseyer.pokemonkotlin.R
@@ -64,7 +65,6 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
     }
 
     override fun dataInterchage(info: ArrayList<PokemonBasicInfo>) {
-
         pokemonFragment.onSendPokemonData(
           info
         )
