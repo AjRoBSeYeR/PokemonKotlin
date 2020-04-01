@@ -23,6 +23,8 @@ class PokemonAdapter : BaseAdapter {
     private var pokemonList: ArrayList<PokemonBasicInfo>?
     var url: String=""
     var context:Context
+    // pongo esta variable porque hay algunos pokemon que no traen los datos con el nombre y aesos les paso el id
+    var pokemonName:String =""
 
     constructor(context: Context, pokemonList: ArrayList<PokemonBasicInfo>?) : super() {
         this.pokemonList = pokemonList
@@ -44,7 +46,14 @@ class PokemonAdapter : BaseAdapter {
         val apiService =
             RestClient.getRestClient()
 
-        apiService.getPokemonData(pokemon.name).enqueue(object : Callback<JsonObject> {
+        // controlador de pokemnos qu eno traen datos con el nombre
+        if(pokemon.name=="spearow"){
+            pokemonName="21"
+        }else{
+            pokemonName=pokemon.name
+        }
+
+        apiService.getPokemonData(pokemonName).enqueue(object : Callback<JsonObject> {
             override fun onResponse(
                 call: Call<JsonObject>?,
                 response: Response<JsonObject>?

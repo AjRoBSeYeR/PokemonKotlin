@@ -10,8 +10,12 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("pokemon/")
-    fun get20Pokemon(): Call<PokemonResponseServiceModel>
+    @GET("pokemon")
+    fun get20Pokemon(
+        @Query("offset") offset: String,
+        @Query("limit") limit: String
+    ): Call<PokemonResponseServiceModel>
+
     @GET("pokemon/{pokemonName}")
-    fun getPokemonData(@Path("pokemonName") pokemonName:String): Call<JsonObject>
+    fun getPokemonData(@Path("pokemonName") pokemonName: String): Call<JsonObject>
 }

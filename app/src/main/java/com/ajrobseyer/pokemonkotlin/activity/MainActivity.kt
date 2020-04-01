@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
         val apiService =
             RestClient.getRestClient()
 
-        apiService.get20Pokemon().enqueue(object : Callback<PokemonResponseServiceModel> {
+        apiService.get20Pokemon("0",getString(R.string.query_limit)).enqueue(object : Callback<PokemonResponseServiceModel> {
             override fun onResponse(
                 call: Call<PokemonResponseServiceModel>?,
                 response: Response<PokemonResponseServiceModel>?
@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
                         it.count.toString(),
                         it.results as ArrayList<PokemonBasicInfo>
                     )
-                    supportFragmentManager.beginTransaction().replace(R.id.headContainer, headerFragment)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.headContainer, headerFragment)
                         .commit()
                     pokemonFragment = PokemonFragment.newInstance()
                     supportFragmentManager.beginTransaction()
@@ -67,10 +68,9 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
 
     override fun dataInterchage(info: ArrayList<PokemonBasicInfo>) {
         pokemonFragment.onSendPokemonData(
-          info
+            info
         )
     }
-
 
 
 }

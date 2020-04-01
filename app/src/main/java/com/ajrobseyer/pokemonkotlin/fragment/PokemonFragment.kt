@@ -1,12 +1,10 @@
 package com.ajrobseyer.pokemonkotlin.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.ajrobseyer.pokemonkotlin.R
@@ -17,8 +15,8 @@ import kotlinx.android.synthetic.main.fragment_pokemon.*
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
-private var viewCreated = false
-var pokemonList2: MutableLiveData<ArrayList<PokemonBasicInfo>> = MutableLiveData<ArrayList<PokemonBasicInfo>>()
+var pokemonList: MutableLiveData<ArrayList<PokemonBasicInfo>> =
+    MutableLiveData<ArrayList<PokemonBasicInfo>>()
 
 
 class PokemonFragment : Fragment() {
@@ -56,20 +54,17 @@ class PokemonFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        pokemonList2.observe(this,
-            Observer<ArrayList<PokemonBasicInfo>?> {
+        pokemonList.observe(this,
+            Observer {
                 pokemonGrid.adapter = PokemonAdapter(
                     context!!,
                     it
                 )
             })
-
-//        viewCreated = true
-//        onSendPokemonData(pokemonList)
     }
 
     fun onSendPokemonData(pokemonInfo: ArrayList<PokemonBasicInfo>?) {
-        pokemonList2.value = pokemonInfo
+        pokemonList.value = pokemonInfo
     }
 
 
