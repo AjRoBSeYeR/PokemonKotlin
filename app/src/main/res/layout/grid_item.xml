@@ -9,9 +9,9 @@
 
     <ImageView
         android:id="@+id/pokemonImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:scaleType="fitStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -23,7 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/colorPrimary"
+        android:alpha="0.5"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center"
         android:maxLines="1"
         android:padding="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"

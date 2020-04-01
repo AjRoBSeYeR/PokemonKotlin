@@ -1,16 +1,17 @@
 package com.ajrobseyer.pokemonkotlin.activity
 
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ajrobseyer.pokemonkotlin.R
+import com.ajrobseyer.pokemonkotlin.adapter.GlideApp
 import com.ajrobseyer.pokemonkotlin.fragment.HeaderFragment
 import com.ajrobseyer.pokemonkotlin.fragment.HeaderFragmentCommunication
 import com.ajrobseyer.pokemonkotlin.fragment.PokemonFragment
 import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import com.ajrobseyer.pokemonkotlin.model.servicemodel.PokemonResponseServiceModel
 import com.ajrobseyer.pokemonkotlin.util.RestClient
-import org.jetbrains.anko.toast
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.grid_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
