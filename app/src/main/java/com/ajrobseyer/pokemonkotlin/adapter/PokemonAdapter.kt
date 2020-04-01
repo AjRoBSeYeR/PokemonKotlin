@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.TextView
 import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import com.ajrobseyer.pokemonkotlin.util.RestClient
@@ -18,39 +20,56 @@ import retrofit2.Response
 
 @GlideModule
 class AppGlideModule : AppGlideModule()
+class ViewHolder(itemView: View?) {
+    var lblPokemonName: TextView? = null
+    var ivPokemonImage: ImageView? = null
+
+    init{
+        this.lblPokemonName = itemView?.pokemonName
+        this.ivPokemonImage = itemView?.pokemonImage
+    }
+}
 
 class PokemonAdapter : BaseAdapter {
     private var pokemonList: ArrayList<PokemonBasicInfo>?
-    var url: String=""
-    var context:Context
+    var url: String = ""
+    var context: Context
+    lateinit var viewHolder: ViewHolder
+
     // pongo esta variable porque hay algunos pokemon que no traen los datos con el nombre y aesos les paso el id
-    var pokemonName:String =""
+    var pokemonName: String = ""
 
     constructor(context: Context, pokemonList: ArrayList<PokemonBasicInfo>?) : super() {
         this.pokemonList = pokemonList
-        this.context=context
+        this.context = context
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        var view:View
-        view = if(convertView == null){
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        var view: View
+        if (convertView == null) {
             val inflater =
                 parent?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            inflater.inflate(R.layout.grid_item, null)
-        }else{
-            convertView
+            view = inflater.inflate(R.layout.grid_item, null)
+            viewHolder = ViewHolder(view)
+            view.tag = viewHolder
+
+        } else {
+            view = convertView
+            viewHolder = view.tag as ViewHolder
         }
+
         val pokemon = this.pokemonList!![position]
 
-        view.pokemonName.text = pokemon.name
+        viewHolder.lblPokemonName?.text = pokemon.name
+
         val apiService =
             RestClient.getRestClient()
 
-        // controlador de pokemnos qu eno traen datos con el nombre
-        if(pokemon.name=="spearow"){
-            pokemonName="21"
-        }else{
-            pokemonName=pokemon.name
+        // controlador de pokemon que no traen datos con el nombre
+        if (pokemon.name == "spearow") {
+            pokemonName = "21"
+        } else {
+            pokemonName = pokemon.name
         }
 
         apiService.getPokemonData(pokemonName).enqueue(object : Callback<JsonObject> {
@@ -65,7 +84,6 @@ class PokemonAdapter : BaseAdapter {
                         .with(context)
                         .load(url)
                         .into(view.pokemonImage)
-
                 }
             }
 
@@ -77,8 +95,8 @@ class PokemonAdapter : BaseAdapter {
         return view
     }
 
-    fun changeData(list:ArrayList<PokemonBasicInfo>?){
-        if(list!= null){
+    fun changeData(list: ArrayList<PokemonBasicInfo>?) {
+        if (list != null) {
             pokemonList = list
             notifyDataSetChanged()
         }
