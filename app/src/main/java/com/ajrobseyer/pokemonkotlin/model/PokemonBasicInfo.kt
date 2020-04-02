@@ -1,5 +1,7 @@
 package com.ajrobseyer.pokemonkotlin.model
 
-class PokemonBasicInfo {
+import java.io.Serializable
+
+class PokemonBasicInfo:Serializable {
     val name:String=""
 }
