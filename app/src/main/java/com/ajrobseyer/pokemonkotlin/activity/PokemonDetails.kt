@@ -19,6 +19,7 @@ class PokemonDetails : AppCompatActivity() {
     internal var adapter: ExpandableListAdapter? = null
     internal var titleList: MutableList<String>? = null
 
+
     val data: HashMap<String, List<String>> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,23 +50,34 @@ class PokemonDetails : AppCompatActivity() {
                 response?.body().let {
                     val sprites = it!!.getAsJsonObject("sprites")
                     val url = sprites.getAsJsonPrimitive("front_default").asString
-
-                    titleList = mutableListOf()
+                    val abilitiesList: ArrayList<String> = ArrayList()
+                    titleList = ArrayList()
                     GlideApp
                         .with(applicationContext)
                         .load(url)
                         .into(pokemonPhoto)
 
-                    for (s in it.keySet()) {
-                        when (s) {
+                    for (member in it.keySet()) {
+                        when (member) {
                             "abilities" -> titleList?.add("Habilidades")
-                            "moves" -> titleList?.add("Movimientos")
+                            /*"moves" -> titleList?.add("Movimientos")
                             "species" -> titleList?.add("Especies")
-                            "stats" -> titleList?.add("Estadísticas")
+                            "stats" -> titleList?.add("Estadísticas")*/
                         }
 
                     }
-                    fillExpandableList()
+                    val abilities = it.getAsJsonArray("abilities")
+                    for (ability in abilities) {
+                        val abilityJo = ability.asJsonObject
+                        val abilitySubJo = abilityJo.getAsJsonObject("ability")
+                        val pokeName = abilitySubJo.getAsJsonPrimitive("name").asString
+                        abilitiesList.add(pokeName)
+                        println()
+                    }
+                    data["Habilidades"] = abilitiesList
+
+
+                    populateExpandableList()
                 }
             }
 
@@ -75,35 +87,34 @@ class PokemonDetails : AppCompatActivity() {
         })
     }
 
-    private fun fillExpandableList() {
-        val listData = data
-        adapter = PokemonDetailsAdapter(this, titleList as ArrayList<String>, listData)
+    private fun populateExpandableList() {
+        adapter = PokemonDetailsAdapter(this, titleList as ArrayList<String>, data)
         expandableList!!.setAdapter(adapter)
 
         expandableList!!.setOnGroupExpandListener { groupPosition ->
-            Toast.makeText(
+            /*Toast.makeText(
                 applicationContext,
                 (titleList as ArrayList<String>)[groupPosition] + " List Expanded.",
                 Toast.LENGTH_SHORT
-            ).show()
+            ).show()*/
         }
 
         expandableList!!.setOnGroupCollapseListener { groupPosition ->
-            Toast.makeText(
+            /*Toast.makeText(
                 applicationContext,
                 (titleList as ArrayList<String>)[groupPosition] + " List Collapsed.",
                 Toast.LENGTH_SHORT
-            ).show()
+            ).show()*/
         }
 
         expandableList!!.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
-            Toast.makeText(
+           /* Toast.makeText(
                 applicationContext,
-                "Clicked: " + (titleList as ArrayList<String>)[groupPosition] + " -> " + listData[(titleList as ArrayList<String>)[groupPosition]]!!.get(
+                "Clicked: " + (titleList as ArrayList<String>)[groupPosition] + " -> " + data[(titleList as ArrayList<String>)[groupPosition]]!!.get(
                     childPosition
                 ),
                 Toast.LENGTH_SHORT
-            ).show()
+            ).show()*/
             false
         }
     }
