@@ -34,7 +34,7 @@ class PokemonAdapter : BaseAdapter {
     private var pokemonList: ArrayList<PokemonBasicInfo>?
     var url: String = ""
     var context: Context
-    lateinit var viewHolder: ViewHolder
+
 
     // pongo esta variable porque hay algunos pokemon que no traen los datos con el nombre y aesos les paso el id
     var pokemonName: String = ""
@@ -45,7 +45,8 @@ class PokemonAdapter : BaseAdapter {
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var view: View
+        val view: View
+        val viewHolder: ViewHolder
         if (convertView == null) {
             val inflater =
                 parent?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -83,7 +84,7 @@ class PokemonAdapter : BaseAdapter {
                     GlideApp
                         .with(context)
                         .load(url)
-                        .into(view.pokemonImage)
+                        .into(viewHolder.ivPokemonImage!!)
                 }
             }
 
@@ -95,12 +96,12 @@ class PokemonAdapter : BaseAdapter {
         return view
     }
 
-    fun changeData(list: ArrayList<PokemonBasicInfo>?) {
+    /*fun changeData(list: ArrayList<PokemonBasicInfo>?) {
         if (list != null) {
             pokemonList = list
             notifyDataSetChanged()
         }
-    }
+    }*/
 
     override fun getItem(position: Int): Any {
         return pokemonList!![position]
