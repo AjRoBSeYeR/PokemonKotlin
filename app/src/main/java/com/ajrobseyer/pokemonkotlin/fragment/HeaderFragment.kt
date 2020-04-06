@@ -9,6 +9,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import com.ajrobseyer.pokemonkotlin.model.servicemodel.PokemonResponseServiceModel
+import com.ajrobseyer.pokemonkotlin.util.DialogManager
 import com.ajrobseyer.pokemonkotlin.util.RestClient
 import kotlinx.android.synthetic.main.fragment_header.*
 import retrofit2.Call
@@ -22,6 +23,8 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
     private var countTotal: String = "0"
     private lateinit var pokemonList: ArrayList<PokemonBasicInfo>
     private var offset: String = ""
+    private lateinit var dialog: SweetAlertDialog
+    val manager = DialogManager()
 
     companion object {
         @JvmStatic
@@ -42,6 +45,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
             countIni = it.getString("countIni").toString()
             countTotal = it.getString("countTotal").toString()
@@ -60,6 +64,8 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        dialog = manager.getLoadingDialog(context!!, false)!!
 
         btnPrev.visibility = View.INVISIBLE
 
@@ -96,6 +102,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
                         t?.printStackTrace()
                     }
                 })
+
         }
 
         btnNext.setOnClickListener {
@@ -132,6 +139,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
                         t?.printStackTrace()
                     }
                 })
+
         }
 
         tvCounter.text = "$countIni de $countTotal"

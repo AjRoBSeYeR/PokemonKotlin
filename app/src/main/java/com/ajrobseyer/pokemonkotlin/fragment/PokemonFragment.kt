@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.activity.PokemonDetailsActivity
 import com.ajrobseyer.pokemonkotlin.adapter.PokemonAdapter
 import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
+import com.ajrobseyer.pokemonkotlin.util.DialogManager
 import kotlinx.android.synthetic.main.fragment_pokemon.*
 
 
@@ -63,6 +65,7 @@ class PokemonFragment : Fragment() {
                     it
                 )
             })
+
         pokemonGrid.setOnItemClickListener { parent, view, position, id ->
             val intent = Intent(context, PokemonDetailsActivity::class.java).apply{
                 putExtra("pkName",pokemonList.value?.get(position)?.name.toString() )

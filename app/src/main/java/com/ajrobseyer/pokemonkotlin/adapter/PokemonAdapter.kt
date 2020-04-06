@@ -100,8 +100,12 @@ class PokemonAdapter : BaseAdapter {
             }
         })
 
+        dialog.dismissWithAnimation()
+
         return view
     }
+
+
 
     /*fun changeData(list: ArrayList<PokemonBasicInfo>?) {
         if (list != null) {
@@ -109,6 +113,7 @@ class PokemonAdapter : BaseAdapter {
             notifyDataSetChanged()
         }
     }*/
+
 
 
 
