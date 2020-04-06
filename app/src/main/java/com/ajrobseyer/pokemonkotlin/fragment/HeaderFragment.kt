@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import com.ajrobseyer.pokemonkotlin.model.servicemodel.PokemonResponseServiceModel

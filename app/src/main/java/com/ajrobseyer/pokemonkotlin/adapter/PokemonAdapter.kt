@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
+import com.ajrobseyer.pokemonkotlin.util.DialogManager
 import com.ajrobseyer.pokemonkotlin.util.RestClient
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
@@ -34,7 +36,7 @@ class PokemonAdapter : BaseAdapter {
     private var pokemonList: ArrayList<PokemonBasicInfo>?
     var url: String = ""
     var context: Context
-
+    private lateinit var dialog: SweetAlertDialog
 
     // pongo esta variable porque hay algunos pokemon que no traen los datos con el nombre y aesos les paso el id
     var pokemonName: String = ""
@@ -47,6 +49,11 @@ class PokemonAdapter : BaseAdapter {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view: View
         val viewHolder: ViewHolder
+
+        val manager = DialogManager()
+
+        dialog = manager.getLoadingDialog(context, false)!!
+        dialog.show()
         if (convertView == null) {
             val inflater =
                 parent?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -102,6 +109,8 @@ class PokemonAdapter : BaseAdapter {
             notifyDataSetChanged()
         }
     }*/
+
+
 
     override fun getItem(position: Int): Any {
         return pokemonList!![position]

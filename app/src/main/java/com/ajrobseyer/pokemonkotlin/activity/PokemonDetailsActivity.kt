@@ -14,7 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PokemonDetails : AppCompatActivity() {
+class PokemonDetailsActivity : AppCompatActivity() {
 
     internal var adapter: ExpandableListAdapter? = null
     internal var titleList: MutableList<String>? = null
@@ -25,6 +25,10 @@ class PokemonDetails : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokemon_details)
+
+        btnBack.setOnClickListener {
+            super.onBackPressed()
+        }
 
         var pokemonName = ""
 
@@ -50,32 +54,16 @@ class PokemonDetails : AppCompatActivity() {
                 response?.body().let {
                     val sprites = it!!.getAsJsonObject("sprites")
                     val url = sprites.getAsJsonPrimitive("front_default").asString
-                    val abilitiesList: ArrayList<String> = ArrayList()
+
                     titleList = ArrayList()
                     GlideApp
                         .with(applicationContext)
                         .load(url)
                         .into(pokemonPhoto)
 
-                    for (member in it.keySet()) {
-                        when (member) {
-                            "abilities" -> titleList?.add("Habilidades")
-                            /*"moves" -> titleList?.add("Movimientos")
-                            "species" -> titleList?.add("Especies")
-                            "stats" -> titleList?.add("Estadísticas")*/
-                        }
+                    populateTitleList(it)
 
-                    }
-                    val abilities = it.getAsJsonArray("abilities")
-                    for (ability in abilities) {
-                        val abilityJo = ability.asJsonObject
-                        val abilitySubJo = abilityJo.getAsJsonObject("ability")
-                        val pokeName = abilitySubJo.getAsJsonPrimitive("name").asString
-                        abilitiesList.add(pokeName)
-                        println()
-                    }
-                    data["Habilidades"] = abilitiesList
-
+                    populateChilds(it)
 
                     populateExpandableList()
                 }
@@ -92,30 +80,50 @@ class PokemonDetails : AppCompatActivity() {
         expandableList!!.setAdapter(adapter)
 
         expandableList!!.setOnGroupExpandListener { groupPosition ->
-            /*Toast.makeText(
-                applicationContext,
-                (titleList as ArrayList<String>)[groupPosition] + " List Expanded.",
-                Toast.LENGTH_SHORT
-            ).show()*/
+
         }
 
         expandableList!!.setOnGroupCollapseListener { groupPosition ->
-            /*Toast.makeText(
-                applicationContext,
-                (titleList as ArrayList<String>)[groupPosition] + " List Collapsed.",
-                Toast.LENGTH_SHORT
-            ).show()*/
+
         }
 
         expandableList!!.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
-           /* Toast.makeText(
-                applicationContext,
-                "Clicked: " + (titleList as ArrayList<String>)[groupPosition] + " -> " + data[(titleList as ArrayList<String>)[groupPosition]]!!.get(
-                    childPosition
-                ),
-                Toast.LENGTH_SHORT
-            ).show()*/
+            /* Toast.makeText(
+                 applicationContext,
+                 "Clicked: " + (titleList as ArrayList<String>)[groupPosition] + " -> " + data[(titleList as ArrayList<String>)[groupPosition]]!!.get(
+                     childPosition
+                 ),
+                 Toast.LENGTH_SHORT
+             ).show()*/
             false
         }
     }
+
+    private fun populateTitleList(response: JsonObject) {
+        for (member in response.keySet()) {
+            when (member) {
+                "abilities" -> titleList?.add("Habilidades")
+                /*"moves" -> titleList?.add("Movimientos")
+                "species" -> titleList?.add("Especies")
+                "stats" -> titleList?.add("Estadísticas")*/
+            }
+
+        }
+    }
+
+    private fun populateChilds(response: JsonObject): HashMap<String, List<String>> {
+        val abilitiesList: ArrayList<String> = ArrayList()
+        val abilities = response.getAsJsonArray("abilities")
+        for (ability in abilities) {
+            val abilityJo = ability.asJsonObject
+            val abilitySubJo = abilityJo.getAsJsonObject("ability")
+            val pokeName = abilitySubJo.getAsJsonPrimitive("name").asString
+            abilitiesList.add(pokeName)
+            println()
+        }
+        data["Habilidades"] = abilitiesList
+        return data
+    }
+
+
 }

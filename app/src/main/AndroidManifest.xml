@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".activity.PokemonDetails"></activity>
+        <activity android:name=".activity.PokemonDetailsActivity"></activity>
         <activity android:name=".activity.PokemosDetail" />
         <activity
             android:name=".activity.MainActivity"
