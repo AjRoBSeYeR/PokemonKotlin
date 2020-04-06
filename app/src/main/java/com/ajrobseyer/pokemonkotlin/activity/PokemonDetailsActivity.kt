@@ -103,9 +103,9 @@ class PokemonDetailsActivity : AppCompatActivity() {
         for (member in response.keySet()) {
             when (member) {
                 "abilities" -> titleList?.add("Habilidades")
-                /*"moves" -> titleList?.add("Movimientos")
+                "moves" -> titleList?.add("Movimientos")
                 "species" -> titleList?.add("Especies")
-                "stats" -> titleList?.add("Estadísticas")*/
+                "stats" -> titleList?.add("Estadísticas")
             }
 
         }
@@ -113,16 +113,44 @@ class PokemonDetailsActivity : AppCompatActivity() {
 
     private fun populateChilds(response: JsonObject): HashMap<String, List<String>> {
         val abilitiesList: ArrayList<String> = ArrayList()
+        val movesList: ArrayList<String> = ArrayList()
+        val speciesList: ArrayList<String> = ArrayList()
+        val statsList: ArrayList<String> = ArrayList()
+        
         val abilities = response.getAsJsonArray("abilities")
         for (ability in abilities) {
             val abilityJo = ability.asJsonObject
             val abilitySubJo = abilityJo.getAsJsonObject("ability")
             val pokeName = abilitySubJo.getAsJsonPrimitive("name").asString
             abilitiesList.add(pokeName)
-            println()
         }
         data["Habilidades"] = abilitiesList
+        val moves = response.getAsJsonArray("moves")
+        for(move in moves){
+            val moveJo = move.asJsonObject
+            val moveSubJo = moveJo.getAsJsonObject("move")
+            val pokeName = moveSubJo.getAsJsonPrimitive("name").asString
+            movesList.add(pokeName)
+        }
+        data["Movimientos"] = movesList
+        val stats = response.getAsJsonArray("stats")
+        for(stat in stats){
+            val statsJo = stat.asJsonObject
+            val statsSubJo = statsJo.getAsJsonObject("stat")
+            val pokeName = statsSubJo.getAsJsonPrimitive("name").asString
+            statsList.add(pokeName)
+        }
+        data["Estadísticas"] = statsList
+        val species = response.getAsJsonObject("species")
+            val pokeName = species.getAsJsonPrimitive("name").asString
+            speciesList.add(pokeName)
+        data["Especies"] = speciesList
+
         return data
+    }
+
+    private fun populateData(){
+
     }
 
 

@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
 
     private lateinit var headerFragment: HeaderFragment
     private lateinit var pokemonFragment: PokemonFragment
-    private lateinit var loader: LoaderScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
