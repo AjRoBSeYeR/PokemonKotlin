@@ -116,42 +116,36 @@ class PokemonDetailsActivity : AppCompatActivity() {
         val movesList: ArrayList<String> = ArrayList()
         val speciesList: ArrayList<String> = ArrayList()
         val statsList: ArrayList<String> = ArrayList()
-        
+
         val abilities = response.getAsJsonArray("abilities")
         for (ability in abilities) {
             val abilityJo = ability.asJsonObject
             val abilitySubJo = abilityJo.getAsJsonObject("ability")
-            val pokeName = abilitySubJo.getAsJsonPrimitive("name").asString
-            abilitiesList.add(pokeName)
+            val abilityName = abilitySubJo.getAsJsonPrimitive("name").asString
+            abilitiesList.add(abilityName)
         }
         data["Habilidades"] = abilitiesList
         val moves = response.getAsJsonArray("moves")
-        for(move in moves){
+        for (move in moves) {
             val moveJo = move.asJsonObject
             val moveSubJo = moveJo.getAsJsonObject("move")
-            val pokeName = moveSubJo.getAsJsonPrimitive("name").asString
-            movesList.add(pokeName)
+            val abilityName = moveSubJo.getAsJsonPrimitive("name").asString
+            movesList.add(abilityName)
         }
         data["Movimientos"] = movesList
         val stats = response.getAsJsonArray("stats")
-        for(stat in stats){
+        for (stat in stats) {
             val statsJo = stat.asJsonObject
             val statsSubJo = statsJo.getAsJsonObject("stat")
-            val pokeName = statsSubJo.getAsJsonPrimitive("name").asString
-            statsList.add(pokeName)
+            val moveName = statsSubJo.getAsJsonPrimitive("name").asString
+            statsList.add(moveName)
         }
         data["Estadísticas"] = statsList
         val species = response.getAsJsonObject("species")
-            val pokeName = species.getAsJsonPrimitive("name").asString
-            speciesList.add(pokeName)
+        val specieName = species.getAsJsonPrimitive("name").asString
+        speciesList.add(specieName)
         data["Especies"] = speciesList
 
         return data
     }
-
-    private fun populateData(){
-
-    }
-
-
 }
