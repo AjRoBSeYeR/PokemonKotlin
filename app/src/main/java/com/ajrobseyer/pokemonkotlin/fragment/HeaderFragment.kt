@@ -91,7 +91,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
                             } else {
                                 btnPrev.visibility = View.VISIBLE
                             }
-                            headerFragmentCommunication.dataInterchage(pokemonList)
+                            headerFragmentCommunication.dataExchange(pokemonList)
                         }
                     }
 
@@ -128,7 +128,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
                             } else {
                                 btnNext.visibility = View.VISIBLE
                             }
-                            headerFragmentCommunication.dataInterchage(pokemonList)
+                            headerFragmentCommunication.dataExchange(pokemonList)
                         }
                     }
 
@@ -144,7 +144,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
 
         tvCounter.text = "$countIni de $countTotal"
 
-        headerFragmentCommunication.dataInterchage(
+        headerFragmentCommunication.dataExchange(
             pokemonList
         )
 
@@ -153,5 +153,5 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
 }
 
 interface HeaderFragmentCommunication {
-    fun dataInterchage(info: ArrayList<PokemonBasicInfo>)
+    fun dataExchange(info: ArrayList<PokemonBasicInfo>)
 }

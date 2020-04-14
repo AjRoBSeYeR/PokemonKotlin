@@ -5,9 +5,11 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 class PokemonResponseServiceModel : Serializable {
-    val count:Int=0
+    val count: Int = 0
+
     @SerializedName("next")
-    val nextPage:String=""
+    val nextPage: String = ""
+    val previous: String = ""
     val results: List<PokemonBasicInfo>? = null
 
 
