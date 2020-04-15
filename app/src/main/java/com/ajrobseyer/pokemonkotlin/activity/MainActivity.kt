@@ -19,8 +19,7 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
     private lateinit var headerFragment: HeaderFragment
     private lateinit var pokemonFragment: PokemonFragment
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme)
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -34,10 +33,11 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
                     response: Response<PokemonResponseServiceModel>?
                 ) {
                     response?.body().let {
-                        val equalPosition = it!!.nextPage.indexOf("=")
-                        val ampersandPosition = it!!.nextPage.indexOf("&")
+                        it!!
+                        val equalPosition = it.nextPage.indexOf("=")
+                        val ampersandPosition = it.nextPage.indexOf("&")
                         val upperLimit: Int =
-                            it!!.nextPage.substring(equalPosition + 1, ampersandPosition).toInt()
+                            it.nextPage.substring(equalPosition + 1, ampersandPosition).toInt()
                         val lowerLimit: Int = upperLimit - 19
                         val range = "$lowerLimit a $upperLimit"
 
@@ -65,10 +65,6 @@ class MainActivity : AppCompatActivity(), HeaderFragmentCommunication {
     }
 
     override fun dataInterchage(info: ArrayList<PokemonBasicInfo>) {
-        pokemonFragment.onSendPokemonData(
-            info
-        )
+        pokemonFragment.onSendPokemonData(info)
     }
-
-
 }

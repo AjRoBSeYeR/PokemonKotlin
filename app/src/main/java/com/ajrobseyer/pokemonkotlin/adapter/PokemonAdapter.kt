@@ -12,39 +12,28 @@ import com.ajrobseyer.pokemonkotlin.R
 import com.ajrobseyer.pokemonkotlin.model.PokemonBasicInfo
 import com.ajrobseyer.pokemonkotlin.util.DialogManager
 import com.ajrobseyer.pokemonkotlin.util.RestClient
-import com.bumptech.glide.annotation.GlideModule
-import com.bumptech.glide.module.AppGlideModule
+import com.bumptech.glide.Glide
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.grid_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-@GlideModule
-class AppGlideModule : AppGlideModule()
 class ViewHolder(itemView: View?) {
     var lblPokemonName: TextView? = null
     var ivPokemonImage: ImageView? = null
 
-    init{
+    init {
         this.lblPokemonName = itemView?.pokemonName
         this.ivPokemonImage = itemView?.pokemonImage
     }
 }
 
-class PokemonAdapter : BaseAdapter {
-    private var pokemonList: ArrayList<PokemonBasicInfo>?
+class PokemonAdapter(val context: Context, val pokemonList: ArrayList<PokemonBasicInfo>?) :
+    BaseAdapter() {
+
     var url: String = ""
-    var context: Context
     private lateinit var dialog: SweetAlertDialog
-
-    // pongo esta variable porque hay algunos pokemon que no traen los datos con el nombre y aesos les paso el id
-    var pokemonName: String = ""
-
-    constructor(context: Context, pokemonList: ArrayList<PokemonBasicInfo>?) : super() {
-        this.pokemonList = pokemonList
-        this.context = context
-    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view: View
@@ -56,7 +45,7 @@ class PokemonAdapter : BaseAdapter {
         dialog.show()
         if (convertView == null) {
             val inflater =
-                parent?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             view = inflater.inflate(R.layout.grid_item, null)
             viewHolder = ViewHolder(view)
             view.tag = viewHolder
@@ -74,13 +63,15 @@ class PokemonAdapter : BaseAdapter {
             RestClient.getRestClient()
 
         // controlador de pokemon que no traen datos con el nombre
+        val pokemonId: String
         if (pokemon.name == "spearow") {
-            pokemonName = "21"
+            pokemonId = "21"
         } else {
-            pokemonName = pokemon.name
+            pokemonId = if (pokemon.name != null) pokemon.name!!
+            else ""
         }
 
-        apiService.getPokemonData(pokemonName).enqueue(object : Callback<JsonObject> {
+        apiService.getPokemonData(pokemonId).enqueue(object : Callback<JsonObject> {
             override fun onResponse(
                 call: Call<JsonObject>?,
                 response: Response<JsonObject>?
@@ -88,7 +79,7 @@ class PokemonAdapter : BaseAdapter {
                 response?.body().let {
                     val sprites = it!!.getAsJsonObject("sprites")
                     url = sprites.getAsJsonPrimitive("front_default").asString
-                    GlideApp
+                    Glide
                         .with(context)
                         .load(url)
                         .into(viewHolder.ivPokemonImage!!)
@@ -105,18 +96,6 @@ class PokemonAdapter : BaseAdapter {
         return view
     }
 
-
-
-    /*fun changeData(list: ArrayList<PokemonBasicInfo>?) {
-        if (list != null) {
-            pokemonList = list
-            notifyDataSetChanged()
-        }
-    }*/
-
-
-
-
     override fun getItem(position: Int): Any {
         return pokemonList!![position]
     }
@@ -128,5 +107,4 @@ class PokemonAdapter : BaseAdapter {
     override fun getCount(): Int {
         return pokemonList!!.size
     }
-
 }

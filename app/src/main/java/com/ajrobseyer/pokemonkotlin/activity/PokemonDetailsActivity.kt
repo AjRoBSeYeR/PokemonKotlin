@@ -1,13 +1,15 @@
 package com.ajrobseyer.pokemonkotlin.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.ExpandableListAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ajrobseyer.pokemonkotlin.R
-import com.ajrobseyer.pokemonkotlin.adapter.GlideApp
 import com.ajrobseyer.pokemonkotlin.adapter.PokemonDetailsAdapter
+import com.ajrobseyer.pokemonkotlin.model.pokemondetails.PokemonDetail
 import com.ajrobseyer.pokemonkotlin.util.RestClient
+import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_pokemon_details.*
 import retrofit2.Call
@@ -19,18 +21,15 @@ class PokemonDetailsActivity : AppCompatActivity() {
     internal var adapter: ExpandableListAdapter? = null
     internal var titleList: MutableList<String>? = null
 
-
-    val data: HashMap<String, List<String>> = HashMap()
+    private val data: HashMap<String, List<String>> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokemon_details)
 
-        btnBack.setOnClickListener {
-            super.onBackPressed()
-        }
+        btnBack.setOnClickListener { super.onBackPressed() }
 
-        var pokemonName = ""
+        val pokemonName: String
 
         tvName.text = intent.getStringExtra("pkName")
 
@@ -38,7 +37,7 @@ class PokemonDetailsActivity : AppCompatActivity() {
         if (tvName.text == "spearow") {
             pokemonName = "21"
         } else {
-            pokemonName = intent.getStringExtra("pkName")
+            pokemonName = intent.getStringExtra("pkName")!!
         }
 
         //llamada a servicio que eliminaremos al implementar SQLite
@@ -52,18 +51,15 @@ class PokemonDetailsActivity : AppCompatActivity() {
                 response: Response<JsonObject>?
             ) {
                 response?.body().let {
-                    val sprites = it!!.getAsJsonObject("sprites")
-                    val url = sprites.getAsJsonPrimitive("front_default").asString
+                    val pokemonDetail = Gson().fromJson(it!!.toString(), PokemonDetail::class.java)
 
-                    titleList = ArrayList()
-                    GlideApp
+                    Glide
                         .with(applicationContext)
-                        .load(url)
+                        .load(pokemonDetail.sprites?.imageUrl)
                         .into(pokemonPhoto)
 
-                    populateTitleList(it)
-
-                    populateChilds(it)
+                    populateTitleList(pokemonDetail)
+                    populateChilds(pokemonDetail)
 
                     populateExpandableList()
                 }
@@ -78,80 +74,56 @@ class PokemonDetailsActivity : AppCompatActivity() {
     private fun populateExpandableList() {
         adapter = PokemonDetailsAdapter(this, titleList as ArrayList<String>, data)
         expandableList!!.setAdapter(adapter)
-
-        expandableList!!.setOnGroupExpandListener { groupPosition ->
-
-        }
-
-        expandableList!!.setOnGroupCollapseListener { groupPosition ->
-
-        }
-
-        expandableList!!.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
-            /* Toast.makeText(
-                 applicationContext,
-                 "Clicked: " + (titleList as ArrayList<String>)[groupPosition] + " -> " + data[(titleList as ArrayList<String>)[groupPosition]]!!.get(
-                     childPosition
-                 ),
-                 Toast.LENGTH_SHORT
-             ).show()*/
-            false
-        }
     }
 
-    private fun populateTitleList(response: JsonObject) {
-        for (member in response.keySet()) {
-            when (member) {
-                "abilities" -> titleList?.add("Habilidades")
-                "moves" -> titleList?.add("Movimientos")
-                "species" -> titleList?.add("Especies")
-                "stats" -> titleList?.add("Estadísticas")
-            }
+    private fun populateTitleList(detail: PokemonDetail) {
+        titleList = ArrayList()
 
-        }
+        if (!detail.abilities.isNullOrEmpty())
+            titleList?.add(getString(R.string.abilities))
+
+        if (!detail.moves.isNullOrEmpty())
+            titleList?.add(getString(R.string.moves))
+
+        if (detail.species != null)
+            titleList?.add(getString(R.string.species))
+
+        if (!detail.stats.isNullOrEmpty())
+            titleList?.add(getString(R.string.stats))
     }
 
-    private fun populateChilds(response: JsonObject): HashMap<String, List<String>> {
+    private fun populateChilds(detail: PokemonDetail): HashMap<String, List<String>> {
         val abilitiesList: ArrayList<String> = ArrayList()
         val movesList: ArrayList<String> = ArrayList()
         val speciesList: ArrayList<String> = ArrayList()
         val statsList: ArrayList<String> = ArrayList()
-        
-        val abilities = response.getAsJsonArray("abilities")
-        for (ability in abilities) {
-            val abilityJo = ability.asJsonObject
-            val abilitySubJo = abilityJo.getAsJsonObject("ability")
-            val pokeName = abilitySubJo.getAsJsonPrimitive("name").asString
-            abilitiesList.add(pokeName)
+
+        if (!detail.abilities.isNullOrEmpty())
+            for (abilityInfo in detail.abilities) {
+                if (abilityInfo.ability != null)
+                    abilitiesList.add(abilityInfo.ability.name ?: "Unknown ability")//poner en strings.xml
+            }
+        data[getString(R.string.abilities)] = abilitiesList
+
+        if (!detail.moves.isNullOrEmpty())
+            for (moveInfo in detail.moves) {
+                if (moveInfo.move != null)
+                    movesList.add(moveInfo.move.name ?: "Unknown move")//poner en strings.xml
+            }
+        data[getString(R.string.moves)] = movesList
+
+        if (!detail.stats.isNullOrEmpty())
+            for (statInfo in detail.stats)
+                if (statInfo.stat != null)
+                    statsList.add(statInfo.stat.name ?: "Unknown stat")//poner en strings.xml
+
+        data[getString(R.string.stats)] = statsList
+
+        if (detail.species != null) {
+            speciesList.add(detail.species.name ?: "Unknown Pokemon")//poner en strings.xml
+            data[getString(R.string.species)] = speciesList
         }
-        data["Habilidades"] = abilitiesList
-        val moves = response.getAsJsonArray("moves")
-        for(move in moves){
-            val moveJo = move.asJsonObject
-            val moveSubJo = moveJo.getAsJsonObject("move")
-            val pokeName = moveSubJo.getAsJsonPrimitive("name").asString
-            movesList.add(pokeName)
-        }
-        data["Movimientos"] = movesList
-        val stats = response.getAsJsonArray("stats")
-        for(stat in stats){
-            val statsJo = stat.asJsonObject
-            val statsSubJo = statsJo.getAsJsonObject("stat")
-            val pokeName = statsSubJo.getAsJsonPrimitive("name").asString
-            statsList.add(pokeName)
-        }
-        data["Estadísticas"] = statsList
-        val species = response.getAsJsonObject("species")
-            val pokeName = species.getAsJsonPrimitive("name").asString
-            speciesList.add(pokeName)
-        data["Especies"] = speciesList
 
         return data
     }
-
-    private fun populateData(){
-
-    }
-
-
 }

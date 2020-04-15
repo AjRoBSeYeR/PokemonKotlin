@@ -1,9 +1,9 @@
-package com.ajrobseyer.pokemonkotlin.model
+package com.ajrobseyer.pokemonkotlin.model.pokemondetails
 
 import android.os.Parcel
 import android.os.Parcelable
 
-data class PokemonBasicInfo(var name:String?=""):Parcelable {
+data class PokemonAbility(val name: String?): Parcelable {
     constructor(parcel: Parcel) : this(parcel.readString()) {
     }
 
@@ -15,14 +15,14 @@ data class PokemonBasicInfo(var name:String?=""):Parcelable {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<PokemonBasicInfo> {
-        override fun createFromParcel(parcel: Parcel): PokemonBasicInfo {
-            return PokemonBasicInfo(
+    companion object CREATOR : Parcelable.Creator<PokemonAbility> {
+        override fun createFromParcel(parcel: Parcel): PokemonAbility {
+            return PokemonAbility(
                 parcel
             )
         }
 
-        override fun newArray(size: Int): Array<PokemonBasicInfo?> {
+        override fun newArray(size: Int): Array<PokemonAbility?> {
             return arrayOfNulls(size)
         }
     }

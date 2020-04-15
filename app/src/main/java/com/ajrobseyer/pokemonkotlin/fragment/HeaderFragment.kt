@@ -23,7 +23,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
     private var countTotal: String = "0"
     private lateinit var pokemonList: ArrayList<PokemonBasicInfo>
     private var offset: String = ""
-    private lateinit var dialog: SweetAlertDialog
+    private var dialog: SweetAlertDialog? = null
     val manager = DialogManager()
 
     companion object {
@@ -38,7 +38,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
                 arguments = Bundle().apply {
                     putString("countIni", ini)
                     putString("countTotal", total)
-                    putSerializable("lista", pokemonList)
+                    putParcelableArrayList("lista", pokemonList)
                 }
             }
     }
@@ -49,7 +49,7 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
         arguments?.let {
             countIni = it.getString("countIni").toString()
             countTotal = it.getString("countTotal").toString()
-            pokemonList = it.getSerializable("lista") as ArrayList<PokemonBasicInfo>
+            pokemonList = it.getParcelableArrayList<PokemonBasicInfo>("lista")!!
         }
     }
 
@@ -57,99 +57,77 @@ class HeaderFragment(private val headerFragmentCommunication: HeaderFragmentComm
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.fragment_header, container, false)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialog = manager.getLoadingDialog(context!!, false)!!
+        if (context != null)
+            dialog = manager.getLoadingDialog(context!!, false)
 
+        tvCounter.text = String.format("%1\$s de %2\$s", countIni, countTotal)
         btnPrev.visibility = View.INVISIBLE
 
-        btnPrev.setOnClickListener {
-            val parts = countIni.split(" ")
-            offset = (parts[2].toInt() - 40).toString()
-            val apiService =
-                RestClient.getRestClient()
+        btnPrev.setOnClickListener { fetchPage(false) }
+        btnNext.setOnClickListener { fetchPage(true) }
 
-            apiService.get20Pokemon(offset, getString(R.string.query_limit))
-                .enqueue(object : Callback<PokemonResponseServiceModel> {
-                    override fun onResponse(
-                        call: Call<PokemonResponseServiceModel>?,
-                        response: Response<PokemonResponseServiceModel>?
-                    ) {
-                        response?.body().let {
-                            pokemonList = it!!.results as ArrayList<PokemonBasicInfo>
-                            countIni = "${(parts[0].toInt() - 20)} a ${parts[2].toInt() - 20}"
-                            tvCounter.text = "$countIni de $countTotal"
-                            val parts = countIni.split(" ")
-                            if (parts[0].toInt() == 1) {
-                                btnPrev.visibility = View.INVISIBLE
-                            } else {
-                                btnPrev.visibility = View.VISIBLE
-                            }
-                            headerFragmentCommunication.dataInterchage(pokemonList)
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<PokemonResponseServiceModel>?,
-                        t: Throwable?
-                    ) {
-                        t?.printStackTrace()
-                    }
-                })
-
-        }
-
-        btnNext.setOnClickListener {
-            val parts = countIni.split(" ")
-            offset = parts[2]
-            val apiService =
-                RestClient.getRestClient()
-
-            apiService.get20Pokemon(offset, getString(R.string.query_limit))
-                .enqueue(object : Callback<PokemonResponseServiceModel> {
-                    override fun onResponse(
-                        call: Call<PokemonResponseServiceModel>?,
-                        response: Response<PokemonResponseServiceModel>?
-                    ) {
-                        response?.body().let {
-                            pokemonList = it!!.results as ArrayList<PokemonBasicInfo>
-                            countIni = "${(parts[0].toInt() + 20)} a ${parts[2].toInt() + 20}"
-                            tvCounter.text = "$countIni de $countTotal"
-                            val parts = countIni.split(" ")
-                            btnPrev.visibility = View.VISIBLE
-                            if (parts[0].toInt() == countTotal.toInt() - 20) {
-                                btnNext.visibility = View.INVISIBLE
-                            } else {
-                                btnNext.visibility = View.VISIBLE
-                            }
-                            headerFragmentCommunication.dataInterchage(pokemonList)
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<PokemonResponseServiceModel>?,
-                        t: Throwable?
-                    ) {
-                        t?.printStackTrace()
-                    }
-                })
-
-        }
-
-        tvCounter.text = "$countIni de $countTotal"
-
-        headerFragmentCommunication.dataInterchage(
-            pokemonList
-        )
-
+        headerFragmentCommunication.dataInterchage(pokemonList)
     }
 
+    private fun fetchPage(isNext: Boolean) {
+        val parts = countIni.split(" ")
+        offset =
+            if (isNext) parts[2]
+            else (parts[2].toInt() - 40).toString()
+        val apiService =
+            RestClient.getRestClient()
+
+        apiService.get20Pokemon(offset, getString(R.string.query_limit))
+            .enqueue(object : Callback<PokemonResponseServiceModel> {
+                override fun onResponse(
+                    call: Call<PokemonResponseServiceModel>?,
+                    response: Response<PokemonResponseServiceModel>?
+                ) {
+                    response?.body().let {
+                        pokemonList = it!!.results as ArrayList<PokemonBasicInfo>
+                        val minValue =
+                            if (isNext) parts[0].toInt() + 20
+                            else parts[0].toInt() - 20
+                        val maxValue =
+                            if (isNext) parts[2].toInt() + 20
+                            else parts[2].toInt() - 20
+
+                        countIni = "$minValue a $maxValue"
+
+                        tvCounter.text =
+                            String.format(
+                                getString(R.string.header_text),
+                                minValue,
+                                maxValue,
+                                countTotal
+                            )
+
+                        btnPrev.visibility =
+                            if (minValue == 1) View.INVISIBLE
+                            else View.VISIBLE
+
+                        btnNext.visibility =
+                            if (minValue == countTotal.toInt() - 20) View.INVISIBLE
+                            else View.VISIBLE
+
+                        headerFragmentCommunication.dataInterchage(pokemonList)
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<PokemonResponseServiceModel>?,
+                    t: Throwable?
+                ) {
+                    t?.printStackTrace()
+                }
+            })
+    }
 }
 
 interface HeaderFragmentCommunication {
